@@ -1,0 +1,12 @@
+{
+  "name": "silvermeal-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SilverMeal AI 銀膳智庫 — food expiration tracking & senior meal planning for community meal centers and LTC kitchens",
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "test": "node --test tests/"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "SilverMeal AI 銀膳智庫",
+  "short_name": "SilverMeal",
+  "description": "Food expiration tracking & senior meal planning for community meal centers and LTC kitchens.",
+  "start_url": "./#home",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF7F2",
+  "theme_color": "#2E7D5B",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
