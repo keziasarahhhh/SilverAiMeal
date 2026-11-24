@@ -71,6 +71,23 @@ function counts() {
   return c;
 }
 
+
+/**
+ * Two-step confirmation inside the button itself (no browser pop-up, which
+ * some embedded viewers block): first tap shows the question, second tap acts.
+ */
+function armConfirm(btn, question, action) {
+  const label = btn.textContent;
+  let timer = null;
+  btn.onclick = () => {
+    if (btn.dataset.armed) { clearTimeout(timer); action(); return; }
+    btn.dataset.armed = '1';
+    btn.classList.add('armed');
+    btn.textContent = `${question} ${t('tap_again')}`;
+    timer = setTimeout(() => { delete btn.dataset.armed; btn.classList.remove('armed'); btn.textContent = label; }, 4000);
+  };
+}
+
 const statusDot = (st) => `<span class="dot dot-${st}" aria-hidden="true"></span>`;
 
 // ---------------------------------------------------------------------------
@@ -190,13 +207,12 @@ function openItem(id) {
       if (it.qtyKg <= 0) S.inventory = S.inventory.filter((x) => x !== it);
       save(); d.close(); toast(t('saved')); route();
     };
-    $('[data-discard]', d).onclick = () => {
-      if (!confirm(t('discard_confirm'))) return;
+    armConfirm($('[data-discard]', d), t('discard_confirm'), () => {
       const f0 = FOOD_BY_ID[it.foodId];
       S.wasteLog.push({ date: isoDate(today()), type: 'expired', foodId: it.foodId, kg: it.qtyKg, cost: Math.round(it.qtyKg * f0.price), wasExpired: st === 'expired' });
       S.inventory = S.inventory.filter((x) => x !== it);
       save(); d.close(); toast(t('discarded')); route();
-    };
+    });
   });
 }
 
@@ -569,8 +585,8 @@ function openSettings() {
       Object.assign(S.settings, { facility: fd.get('facility').trim() || s.facility, servings: Math.max(1, +fd.get('servings') || 30), texture: fd.get('texture'), lang: fd.get('lang'), theme: fd.get('theme'), apiKey: fd.get('apiKey').trim() });
       save(); d.close(); applyChrome(); route(); toast(t('saved'));
     };
-    $('[data-reset]', d).onclick = () => { if (confirm(t('reset_confirm'))) { const keep = S.settings; S = defaultState(); S.settings = keep; draftPlan = null; planSelection = null; save(); d.close(); route(); } };
-    $('[data-clear]', d).onclick = () => { if (confirm(t('clear_confirm'))) { const keep = S.settings; S = { ...defaultState(), inventory: [], settings: keep }; draftPlan = null; planSelection = null; save(); d.close(); route(); } };
+    armConfirm($('[data-reset]', d), t('reset_confirm'), () => { const keep = S.settings; S = defaultState(); S.settings = keep; draftPlan = null; planSelection = null; save(); d.close(); route(); });
+    armConfirm($('[data-clear]', d), t('clear_confirm'), () => { const keep = S.settings; S = { ...defaultState(), inventory: [], settings: keep }; draftPlan = null; planSelection = null; save(); d.close(); route(); });
   });
 }
 

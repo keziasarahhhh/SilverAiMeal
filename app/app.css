@@ -249,3 +249,4 @@ input[type=range]::-moz-range-thumb { width: 26px; height: 26px; border-radius: 
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+.btn.armed { background: var(--red); border-color: var(--red); color: #fff; }
