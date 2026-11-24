@@ -2,11 +2,17 @@
 
 AI-powered food expiration tracking and senior group-meal planning for **community meal centers (共餐據點)** and **long-term care facilities**. It's software only, with no extra hardware: a website, an installable mobile web app (PWA), and a simulator.
 
-| Part | Path | What it is |
-|---|---|---|
-| Website | [`/`](index.html) | Bilingual landing page explaining the problem, the closed loop and the impact |
-| App | [`/app/`](app/) | The working mobile app (PWA, works offline, installable to the home screen) |
-| Simulator | [`/simulator/`](simulator/) | Kitchen Monte-Carlo simulation (Manual vs SilverMeal AI) + phone/tablet device preview of the app |
+## Try it live
+
+**▶ [Open the simulator](https://keziasarahhhh.github.io/SilverAiMeal/simulator/)** · **[Open the app](https://keziasarahhhh.github.io/SilverAiMeal/app/)** · **[Visit the website](https://keziasarahhhh.github.io/SilverAiMeal/)**
+
+| Part | Live link | Code | What it is |
+|---|---|---|---|
+| Website | [keziasarahhhh.github.io/SilverAiMeal](https://keziasarahhhh.github.io/SilverAiMeal/) | [`index.html`](index.html) | Bilingual landing page explaining the problem, the closed loop and the impact |
+| App | […/SilverAiMeal/app/](https://keziasarahhhh.github.io/SilverAiMeal/app/) | [`app/`](app/) | The working mobile app (PWA, works offline, installable to the home screen) |
+| Simulator | […/SilverAiMeal/simulator/](https://keziasarahhhh.github.io/SilverAiMeal/simulator/) | [`simulator/`](simulator/) | Kitchen simulation (paper logs vs SilverMeal AI) + phone/tablet preview of the app |
+
+The app opens with a demo kitchen already stocked. On a phone, open the app link and choose **Add to Home Screen** to install it.
 
 ## The closed loop
 
