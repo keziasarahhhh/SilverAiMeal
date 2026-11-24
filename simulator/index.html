@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SilverMeal Simulator</title>
+<meta name="description" content="Simulate an institutional kitchen with paper logs versus SilverMeal AI, and preview the app on a phone or tablet.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232E7D5B'/%3E%3Cpath d='M8 18a8 8 0 0 0 16 0z' fill='%23fff'/%3E%3Ccircle cx='16' cy='11' r='3' fill='%23F2A541'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sim.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../">
+      <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#2E7D5B"/><path d="M8 18a8 8 0 0 0 16 0z" fill="#fff"/><circle cx="16" cy="11" r="3" fill="#F2A541"/></svg>
+      <span>SilverMeal AI <small data-i18n="brandSub">Simulator</small></span>
+    </a>
+    <nav class="nav">
+      <a href="../" data-i18n="navSite">Website</a>
+      <a href="../app/" data-i18n="navApp">Open app</a>
+      <button class="chip-btn" id="langBtn" type="button" aria-label="Language">中文</button>
+      <button class="chip-btn" id="themeBtn" type="button" aria-label="Theme">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1 data-i18n="title">SilverMeal Simulator</h1>
+  <p class="lede" data-i18n="lede">Run a virtual community kitchen for weeks in seconds. Both kitchens get the same deliveries and serve the same seniors — one runs on paper logs, the other on SilverMeal AI.</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-sim" aria-controls="panel-sim" aria-selected="true" data-i18n="tabSim">Kitchen simulation</button>
+    <button class="tab" role="tab" id="tab-dev" aria-controls="panel-dev" aria-selected="false" data-i18n="tabDev">Device preview</button>
+  </div>
+
+  <section id="panel-sim" class="panel" role="tabpanel" aria-labelledby="tab-sim">
+    <div class="sim-grid">
+      <aside class="card controls" aria-label="Parameters">
+        <h2 data-i18n="params">Parameters</h2>
+        <div class="field"><label for="p-days"><span data-i18n="pDays">Days to simulate</span><output id="o-days"></output></label><input type="range" id="p-days" min="7" max="180" step="1" value="60"></div>
+        <div class="field"><label for="p-seniors"><span data-i18n="pSeniors">Seniors served per day</span><output id="o-seniors"></output></label><input type="range" id="p-seniors" min="10" max="120" step="1" value="40"></div>
+        <div class="field"><label for="p-donFreq"><span data-i18n="pDonFreq">Donation frequency</span><output id="o-donFreq"></output></label><input type="range" id="p-donFreq" min="0" max="1" step="0.05" value="0.35"><div class="hint" data-i18n="hDonFreq">Chance of a donation batch arriving on any day</div></div>
+        <div class="field"><label for="p-donKg"><span data-i18n="pDonKg">Donation batch size</span><output id="o-donKg"></output></label><input type="range" id="p-donKg" min="5" max="80" step="1" value="20"><div class="hint" data-i18n="hDonKg">Average kg per batch — mostly starch, often near its date</div></div>
+        <div class="field"><label for="p-fifo"><span data-i18n="pFifo">Manual FIFO compliance</span><output id="o-fifo"></output></label><input type="range" id="p-fifo" min="0" max="1" step="0.05" value="0.55"><div class="hint" data-i18n="hFifo">How often paper-log cooks pick the oldest item</div></div>
+        <div class="field"><label for="p-miss"><span data-i18n="pMiss">Manual missed-expiry rate</span><output id="o-miss"></output></label><input type="range" id="p-miss" min="0" max="0.4" step="0.01" value="0.08"><div class="hint" data-i18n="hMiss">Daily chance an expired item goes unnoticed</div></div>
+        <div class="field"><label for="p-seed"><span data-i18n="pSeed">Random seed</span></label><input type="number" id="p-seed" value="42" min="1" max="999999" step="1"></div>
+        <div class="btn-row">
+          <button class="btn primary" id="runBtn" type="button" data-i18n="run">Run</button>
+          <button class="btn" id="playBtn" type="button" data-i18n="play">▶ Play</button>
+          <button class="btn" id="randBtn" type="button" data-i18n="newSeed">New seed</button>
+        </div>
+        <div class="speed"><span data-i18n="speed">Speed</span><input type="range" id="p-speed" min="1" max="20" value="8" aria-label="Playback speed"></div>
+        <div class="btn-row"><button class="btn" id="csvBtn" type="button" data-i18n="csv">Export CSV</button><button class="btn" id="resetBtn" type="button" data-i18n="reset">Reset</button></div>
+      </aside>
+
+      <div style="min-width:0">
+        <div class="kpis" id="kpis" aria-live="polite"></div>
+
+        <section class="card kitchen" aria-label="Kitchen view">
+          <div class="kitchen-head">
+            <h2 style="margin:0" data-i18n="kitchenTitle">Live kitchen view</h2>
+            <span class="daybadge" id="dayBadge"></span>
+          </div>
+          <div class="progress"><i id="progressBar"></i></div>
+          <div class="kgrid">
+            <div>
+              <h3><span class="sw silver"></span> <span data-i18n="shelfTitle">SilverMeal shelf (FIFO order)</span></h3>
+              <div class="shelf" id="shelf"></div>
+              <div class="legend-inline">
+                <span><i class="dot" style="background:var(--red)"></i><span data-i18n="lgRed">Today</span></span>
+                <span><i class="dot" style="background:var(--yellow)"></i><span data-i18n="lgYellow">≤ 3 days</span></span>
+                <span><i class="dot" style="background:var(--green)"></i><span data-i18n="lgGreen">Safe</span></span>
+              </div>
+              <div class="arrivals" id="arrivals"></div>
+            </div>
+            <div>
+              <h3><span class="sw silver"></span> <span data-i18n="menuSilver">SilverMeal menu & leftovers</span></h3>
+              <ul class="menu-list" id="menuSilver"></ul>
+              <div class="daystats" id="statsSilver"></div>
+            </div>
+            <div>
+              <h3><span class="sw manual"></span> <span data-i18n="menuManual">Manual menu & leftovers</span></h3>
+              <ul class="menu-list" id="menuManual"></ul>
+              <div class="daystats" id="statsManual"></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="charts" id="charts"></div>
+
+        <section class="card method">
+          <h2 data-i18n="howTitle">How the model works</h2>
+          <ul id="howList"></ul>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section id="panel-dev" class="panel" role="tabpanel" aria-labelledby="tab-dev" hidden>
+    <p class="device-note muted" data-i18n="devNote">This is the real, working SilverMeal app running inside a device frame — tap around, snap a label, plan a meal and log leftovers. Data stays in this browser.</p>
+    <div class="device-bar" style="justify-content:center">
+      <label class="small" for="deviceSel" data-i18n="device">Device</label>
+      <select id="deviceSel">
+        <option value="iphone">iPhone (390 × 844)</option>
+        <option value="android">Android (360 × 740)</option>
+        <option value="tablet">Tablet (768 × 1024)</option>
+      </select>
+      <button class="btn" id="rotateBtn" type="button" data-i18n="rotate">⟳ Rotate</button>
+      <button class="btn" id="reloadBtn" type="button" data-i18n="reload">Reload app</button>
+      <a class="btn" href="../app/" target="_blank" rel="noopener" data-i18n="newTab">Open in new tab</a>
+    </div>
+    <div class="device-stage" id="stage">
+      <div class="device-scale" id="scaler">
+        <div class="phone" id="phone"><div class="notch"></div><iframe id="appFrame" title="SilverMeal app" src="../app/"></iframe></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span data-i18n="foot">Illustrative model with assumed parameters — not measured field data.</span>
+    <span><a href="../">SilverMeal AI</a> · <a href="../app/" data-i18n="navApp">Open app</a></span>
+  </div>
+</footer>
+<script type="module" src="sim.js"></script>
+</body>
+</html>
